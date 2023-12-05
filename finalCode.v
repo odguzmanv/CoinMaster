@@ -41,14 +41,15 @@ module finalCode(coin,display,an,CLK_50,LED,rst);
 	// Este bloque se ejecuta en el flanco positivo del bit 15 del contador clk.
 	always @(posedge clk[15]) begin
 		// Este conjunto de if-else rota los bits de 'an' para activar diferentes anodos en secuencia.
-		if (an==8'b11111110) an = 8'b11111101;
-		else if (an==8'b11111101) an = 8'b11111011;
-		else if (an==8'b11111011) an = 8'b11110111;
-		else if (an==8'b11110111) an = 8'b11101111;
-		else if (an==8'b11101111) an = 8'b11011111;
-		else if (an==8'b11011111) an = 8'b10111111;
-		else if (an==8'b10111111) an = 8'b01111111;
-		else an = 8'b11111110;
+		// Ciclo de control para el registro 'an' que determina qué anodo está activo.
+		if (an==8'b11111110) an = 8'b11111101; // Apaga el segundo bit menos significativo (an[1]).
+		else if (an==8'b11111101) an = 8'b11111011; // Apaga el tercer bit menos significativo (an[2]).
+		else if (an==8'b11111011) an = 8'b11110111; // Apaga el cuarto bit menos significativo (an[3]).
+		else if (an==8'b11110111) an = 8'b11101111; // Apaga el quinto bit menos significativo (an[4]).
+		else if (an==8'b11101111) an = 8'b11011111; // Apaga el sexto bit menos significativo (an[5]).
+		else if (an==8'b11011111) an = 8'b10111111; // Apaga el séptimo bit menos significativo (an[6]).
+		else if (an==8'b10111111) an = 8'b01111111; // Apaga el bit más significativo (an[7]).
+		else an = 8'b11111110; // Reinicia 'an' a su estado inicial con solo an[0] apagado.
 		
 		// Bucle for para determinar qué anodo está activo actualmente.
 		for(i=7,done=0; i>=0 & done==0;i=i-1) begin
@@ -57,126 +58,126 @@ module finalCode(coin,display,an,CLK_50,LED,rst);
 			end
 		end
 
-		// Esta sección actualiza el display en función del valor de la 'currency'.
+|		// Esta sección actualiza el display en función del valor de la 'currency'.
 		// Cada if-else if comprueba el valor de 'i' para saber qué parte de 'currency' mostrar.
-		if (i==0) begin
-			case(currency[3:0])
-				4'b0000: display = 7'b1000000;
-				4'b0001: display = 7'b1111001;
-				4'b0010: display = 7'b0100100;
-				4'b0011: display = 7'b0110000;
-				4'b0100: display = 7'b0011001;
-				4'b0101: display = 7'b0010010;
-				4'b0110: display = 7'b0000010;
-				4'b0111: display = 7'b1111000;
-				4'b1000: display = 7'b0000000;
-				4'b1001: display = 7'b0011000;
-				default: display = 7'b1111111;
+		if (i==0) begin // Si 'i' es 0, significa que se está actualizando el dígito más a la derecha del display.
+			case(currency[3:0]) // Selecciona qué mostrar basado en los 4 bits menos significativos de 'currency'.
+				4'b0000: display = 7'b1000000; // Muestra '0' en el display de 7 segmentos.
+				4'b0001: display = 7'b1111001; // Muestra '1' en el display de 7 segmentos.
+				4'b0010: display = 7'b0100100; // Muestra '2' en el display de 7 segmentos.
+				4'b0011: display = 7'b0110000; // Muestra '3' en el display de 7 segmentos.
+				4'b0100: display = 7'b0011001; // Muestra '4' en el display de 7 segmentos.
+				4'b0101: display = 7'b0010010; // Muestra '5' en el display de 7 segmentos.
+				4'b0110: display = 7'b0000010; // Muestra '6' en el display de 7 segmentos.
+				4'b0111: display = 7'b1111000; // Muestra '7' en el display de 7 segmentos.
+				4'b1000: display = 7'b0000000; // Muestra '8' en el display de 7 segmentos.
+				4'b1001: display = 7'b0011000; // Muestra '9' en el display de 7 segmentos.
+				default: display = 7'b1111111; // En cualquier otro caso, apaga todos los segmentos.
 			endcase
 		end
-		else if(i==1) begin
-			case(currency[7:4])
-				4'b0000: display = 7'b1000000;
-				4'b0001: display = 7'b1111001;
-				4'b0010: display = 7'b0100100;
-				4'b0011: display = 7'b0110000;
-				4'b0100: display = 7'b0011001;
-				4'b0101: display = 7'b0010010;
-				4'b0110: display = 7'b0000010;
-				4'b0111: display = 7'b1111000;
-				4'b1000: display = 7'b0000000;
-				4'b1001: display = 7'b0011000;
-				default: display = 7'b1111111;
+		else if(i==1) begin // Si 'i' es 1, significa que se está actualizando el segundo dígito más a la derecha en el display.
+			case(currency[7:4]) // Selecciona qué mostrar basado en los siguientes 4 bits de 'currency'.
+				4'b0000: display = 7'b1000000; // Muestra '0' en el display de 7 segmentos.
+				4'b0001: display = 7'b1111001; // Muestra '1' en el display de 7 segmentos.
+				4'b0010: display = 7'b0100100; // Muestra '2' en el display de 7 segmentos.
+				4'b0011: display = 7'b0110000; // Muestra '3' en el display de 7 segmentos.
+				4'b0100: display = 7'b0011001; // Muestra '4' en el display de 7 segmentos.
+				4'b0101: display = 7'b0010010; // Muestra '5' en el display de 7 segmentos.
+				4'b0110: display = 7'b0000010; // Muestra '6' en el display de 7 segmentos.
+				4'b0111: display = 7'b1111000; // Muestra '7' en el display de 7 segmentos.
+				4'b1000: display = 7'b0000000; // Muestra '8' en el display de 7 segmentos.
+				4'b1001: display = 7'b0011000; // Muestra '9' en el display de 7 segmentos.
+				default: display = 7'b1111111; // En cualquier otro caso, apaga todos los segmentos.
 			endcase
 		end
-		else if(i==2) begin
-			case(currency[11:8])
-				4'b0000: display = 7'b1000000;
-				4'b0001: display = 7'b1111001;
-				4'b0010: display = 7'b0100100;
-				4'b0011: display = 7'b0110000;
-				4'b0100: display = 7'b0011001;
-				4'b0101: display = 7'b0010010;
-				4'b0110: display = 7'b0000010;
-				4'b0111: display = 7'b1111000;
-				4'b1000: display = 7'b0000000;
-				4'b1001: display = 7'b0011000;
-				default: display = 7'b1111111;
+		else if(i==2) begin // Si 'i' es 2, significa que se está actualizando el tercer dígito más a la derecha en el display.
+			case(currency[11:8]) // Selecciona qué mostrar basado en los bits de la posición 11 a 8 de 'currency'.
+				4'b0000: display = 7'b1000000; // Muestra '0' en el display de 7 segmentos.
+				4'b0001: display = 7'b1111001; // Muestra '1' en el display de 7 segmentos.
+				4'b0010: display = 7'b0100100; // Muestra '2' en el display de 7 segmentos.
+				4'b0011: display = 7'b0110000; // Muestra '3' en el display de 7 segmentos.
+				4'b0100: display = 7'b0011001; // Muestra '4' en el display de 7 segmentos.
+				4'b0101: display = 7'b0010010; // Muestra '5' en el display de 7 segmentos.
+				4'b0110: display = 7'b0000010; // Muestra '6' en el display de 7 segmentos
+				4'b0111: display = 7'b1111000; // Muestra '7' en el display de 7 segmentos.
+				4'b1000: display = 7'b0000000; // Muestra '8' en el display de 7 segmentos.
+				4'b1001: display = 7'b0011000; // Muestra '9' en el display de 7 segmentos.
+				default: display = 7'b1111111; // En cualquier otro caso, apaga todos los segmentos.
 			endcase
 		end
-		else if(i==3) begin
-			case(currency[15:12])
-				4'b0000: display = 7'b1000000;
-				4'b0001: display = 7'b1111001;
-				4'b0010: display = 7'b0100100;
-				4'b0011: display = 7'b0110000;
-				4'b0100: display = 7'b0011001;
-				4'b0101: display = 7'b0010010;
-				4'b0110: display = 7'b0000010;
-				4'b0111: display = 7'b1111000;
-				4'b1000: display = 7'b0000000;
-				4'b1001: display = 7'b0011000;
-				default: display = 7'b1111111;
+		else if(i==3) begin // Si 'i' es 3, se está actualizando el cuarto dígito más a la derecha en el display.
+			case(currency[15:12]) // Selecciona qué mostrar basado en los bits de la posición 15 a 12 de 'currency'.
+				4'b0000: display = 7'b1000000; // Muestra '0' en el display de 7 segmentos.
+				4'b0001: display = 7'b1111001; // Muestra '1' en el display de 7 segmentos.
+				4'b0010: display = 7'b0100100; // Muestra '2' en el display de 7 segmentos.
+				4'b0011: display = 7'b0110000; // Muestra '3' en el display de 7 segmentos.
+				4'b0100: display = 7'b0011001; // Muestra '4' en el display de 7 segmentos.
+				4'b0101: display = 7'b0010010; // Muestra '5' en el display de 7 segmentos.
+				4'b0110: display = 7'b0000010; // Muestra '6' en el display de 7 segmentos.
+				4'b0111: display = 7'b1111000; // Muestra '7' en el display de 7 segmentos.
+				4'b1000: display = 7'b0000000; // Muestra '8' en el display de 7 segmentos.
+				4'b1001: display = 7'b0011000; // Muestra '9' en el display de 7 segmentos.
+				default: display = 7'b1111111; // En cualquier otro caso, apaga todos los segmentos.
 			endcase
 		end
-		else if(i==4) begin
-			case(currency[19:16])
-				4'b0000: display = 7'b1000000;
-				4'b0001: display = 7'b1111001;
-				4'b0010: display = 7'b0100100;
-				4'b0011: display = 7'b0110000;
-				4'b0100: display = 7'b0011001;
-				4'b0101: display = 7'b0010010;
-				4'b0110: display = 7'b0000010;
-				4'b0111: display = 7'b1111000;
-				4'b1000: display = 7'b0000000;
-				4'b1001: display = 7'b0011000;
-				default: display = 7'b1111111;
+		else if(i==4) begin  Si 'i' es 4, se está actualizando el quinto dígito más a la derecha en el display.
+			case(currency[19:16]) // Selecciona qué mostrar basado en los bits de la posición 19 a 16 de 'currency'.
+				4'b0000: display = 7'b1000000; // Muestra '0' en el display de 7 segmentos.
+				4'b0001: display = 7'b1111001; // Muestra '1' en el display de 7 segmentos.
+				4'b0010: display = 7'b0100100; // Muestra '2' en el display de 7 segmentos.
+				4'b0011: display = 7'b0110000; // Muestra '3' en el display de 7 segmentos.
+				4'b0100: display = 7'b0011001; // Muestra '4' en el display de 7 segmentos.
+				4'b0101: display = 7'b0010010; // Muestra '5' en el display de 7 segmentos.
+				4'b0110: display = 7'b0000010; // Muestra '6' en el display de 7 segmentos.
+				4'b0111: display = 7'b1111000; // Muestra '7' en el display de 7 segmentos.
+				4'b1000: display = 7'b0000000; // Muestra '8' en el display de 7 segmentos.
+				4'b1001: display = 7'b0011000; // Muestra '9' en el display de 7 segmentos.
+				default: display = 7'b1111111; // En cualquier otro caso, apaga todos los segmentos.
 			endcase
 		end
-		else if(i==5) begin
-			case(currency[23:20])
-				4'b0000: display = 7'b1000000;
-				4'b0001: display = 7'b1111001;
-				4'b0010: display = 7'b0100100;
-				4'b0011: display = 7'b0110000;
-				4'b0100: display = 7'b0011001;
-				4'b0101: display = 7'b0010010;
-				4'b0110: display = 7'b0000010;
-				4'b0111: display = 7'b1111000;
-				4'b1000: display = 7'b0000000;
-				4'b1001: display = 7'b0011000;
-				default: display = 7'b1111111;
+		else if(i==5) begin // Si 'i' es 5, se está actualizando el sexto dígito más a la derecha en el display.
+			case(currency[23:20]) // Selecciona qué mostrar basado en los bits de la posición 23 a 20 de 'currency'.
+				4'b0000: display = 7'b1000000; // Muestra '0' en el display de 7 segmentos.
+				4'b0001: display = 7'b1111001; // Muestra '1' en el display de 7 segmentos.
+				4'b0010: display = 7'b0100100; // Muestra '2' en el display de 7 segmentos.
+				4'b0011: display = 7'b0110000; // Muestra '3' en el display de 7 segmentos.
+				4'b0100: display = 7'b0011001; // Muestra '4' en el display de 7 segmentos.
+				4'b0101: display = 7'b0010010; // Muestra '5' en el display de 7 segmentos.
+				4'b0110: display = 7'b0000010; // Muestra '6' en el display de 7 segmentos.
+				4'b0111: display = 7'b1111000; // Muestra '7' en el display de 7 segmentos.
+				4'b1000: display = 7'b0000000; // Muestra '8' en el display de 7 segmentos.
+				4'b1001: display = 7'b0011000; // Muestra '9' en el display de 7 segmentos.
+				default: display = 7'b1111111; // En cualquier otro caso, apaga todos los segmentos.
 			endcase
 		end
-		else if(i==6) begin
-			case(currency[27:24])
-				4'b0000: display = 7'b1000000;
-				4'b0001: display = 7'b1111001;
-				4'b0010: display = 7'b0100100;
-				4'b0011: display = 7'b0110000;
-				4'b0100: display = 7'b0011001;
-				4'b0101: display = 7'b0010010;
-				4'b0110: display = 7'b0000010;
-				4'b0111: display = 7'b1111000;
-				4'b1000: display = 7'b0000000;
-				4'b1001: display = 7'b0011000;
-				default: display = 7'b1111111;
+		else if(i==6) begin// Si 'i' es 6, se está actualizando el séptimo dígito más a la derecha en el display.
+			case(currency[27:24]) // Selecciona qué mostrar basado en los bits de la posición 27 a 24 de 'currency'.
+				4'b0000: display = 7'b1000000; // Muestra '0' en el display de 7 segmentos.
+				4'b0001: display = 7'b1111001; // Muestra '1' en el display de 7 segmentos.
+				4'b0010: display = 7'b0100100; // Muestra '2' en el display de 7 segmentos.
+				4'b0011: display = 7'b0110000; // Muestra '3' en el display de 7 segmentos.
+				4'b0100: display = 7'b0011001; // Muestra '4' en el display de 7 segmentos.
+				4'b0101: display = 7'b0010010; // Muestra '5' en el display de 7 segmentos.
+				4'b0110: display = 7'b0000010; // Muestra '6' en el display de 7 segmentos.
+				4'b0111: display = 7'b1111000; // Muestra '7' en el display de 7 segmentos.
+				4'b1000: display = 7'b0000000; // Muestra '8' en el display de 7 segmentos.
+				4'b1001: display = 7'b0011000; // Muestra '9' en el display de 7 segmentos.
+				default: display = 7'b1111111; // En cualquier otro caso, apaga todos los segmentos.
 			endcase
 		end
-		else if(i==7) begin
-			case(currency[31:28])
-				4'b0000: display = 7'b1000000;
-				4'b0001: display = 7'b1111001;
-				4'b0010: display = 7'b0100100;
-				4'b0011: display = 7'b0110000;
-				4'b0100: display = 7'b0011001;
-				4'b0101: display = 7'b0010010;
-				4'b0110: display = 7'b0000010;
-				4'b0111: display = 7'b1111000;
-				4'b1000: display = 7'b0000000;
-				4'b1001: display = 7'b0011000;
-				default: display = 7'b1111111;
+		else if(i==7) begin // Si 'i' es 7, se está actualizando el octavo (último) dígito en el display.
+			case(currency[31:28]) // Selecciona qué mostrar basado en los bits de la posición 31 a 28 de 'currency'.
+				4'b0000: display = 7'b1000000; // Muestra '0' en el display de 7 segmentos.
+				4'b0001: display = 7'b1111001; // Muestra '1' en el display de 7 segmentos.
+				4'b0010: display = 7'b0100100; // Muestra '2' en el display de 7 segmentos.
+				4'b0011: display = 7'b0110000; // Muestra '3' en el display de 7 segmentos.
+				4'b0100: display = 7'b0011001; // Muestra '4' en el display de 7 segmentos.
+				4'b0101: display = 7'b0010010; // Muestra '5' en el display de 7 segmentos.
+				4'b0110: display = 7'b0000010; // Muestra '6' en el display de 7 segmentos.
+				4'b0111: display = 7'b1111000; // Muestra '7' en el display de 7 segmentos.
+				4'b1000: display = 7'b0000000; // Muestra '8' en el display de 7 segmentos.
+				4'b1001: display = 7'b0011000; // Muestra '9' en el display de 7 segmentos.
+				default: display = 7'b1111111; // En cualquier otro caso, apaga todos los segmentos.
 			endcase
 		end
 	end
