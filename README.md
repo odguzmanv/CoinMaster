@@ -5,6 +5,8 @@ Se utilizan sensores infrarojos a distintas alturas para que detecten las distin
 
 Empezamos utilizando el botón de la FPGA para hacer la sumatoria de las monedas, 50 pesos como se ve en el siguiente video. Luego agregamos las demás denominaciones en los demás botones disponibles.
 
-<iframe width="560" height="315" src="https://youtu.be/QKupDmu2JHQ" frameborder="0" allowfullscreen></iframe>
+https://github.com/odguzmanv/CoinMaster/assets/60590466/8b5d4ee1-dfef-466e-9dd5-769ea6189e6c
 
 Luego conectamos la hilera de sensores y pasamos las monedas como se verá en el siguiente video.
+
+https://github.com/odguzmanv/CoinMaster/assets/60590466/89b7918f-a87e-43ae-97d6-30ca02f948ea
