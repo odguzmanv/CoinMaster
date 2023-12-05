@@ -198,68 +198,68 @@ module finalCode(coin,display,an,CLK_50,LED,rst);
 			end
 
 			// Actualiza comb basado en la entrada de coin.
-			if (coin[0] == 1'b1) comb[0]=1'b1;
-			if (coin[1] == 1'b1) comb[1]=1'b1;
-			if (coin[2] == 1'b1) comb[2]=1'b1;
-			if (coin[3] == 1'b1) comb[3]=1'b1;
-			if (coin[4] == 1'b1) comb[4]=1'b1;
+			if (coin[0] == 1'b1) comb[0]=1'b1; // Si el primer bit de 'coin' es 1, establece el primer bit de 'comb' a 1.
+			if (coin[1] == 1'b1) comb[1]=1'b1; // Si el segundo bit de 'coin' es 1, establece el segundo bit de 'comb' a 1.
+			if (coin[2] == 1'b1) comb[2]=1'b1; // Si el tercer bit de 'coin' es 1, establece el tercer bit de 'comb' a 1.
+			if (coin[3] == 1'b1) comb[3]=1'b1; // Si el cuarto bit de 'coin' es 1, establece el cuarto bit de 'comb' a 1.
+			if (coin[4] == 1'b1) comb[4]=1'b1; // Si el quinto bit de 'coin' es 1, establece el quinto bit de 'comb' a 1.
 			
 			//if (contador == 25_000_000) LED = ~comb; // Prueba
 
 			// Lógica para actualizar currency y manejar el acarreo.
 			if (contador == 25_000_000) begin
 
-				// Lógica para actualizar currency y acarreos
+				// Lógica para actualizar currency y acarreos. Depende de la moneda ingresada, se agrega un 1 por cada sensor cubierto.
 				case(comb)
-					5'b00001 : begin
-						if (currency[3:0] == 0) currency = currency + 5;
+					5'b00001 : begin // Cuando 'comb' es 00001 (solo el bit menos significativo está activo).
+						if (currency[3:0] == 0) currency = currency + 5; // Si los 4 bits menos significativos de 'currency' son 0, suma 5.
 						else begin
-							currency[3:0] = 0;
-							acarreo[0] = 1;
+							currency[3:0] = 0; // Si no, reinicia los 4 bits menos significativos de 'currency' a 0.
+							acarreo[0] = 1; // Y establece el primer bit de 'acarreo' a 1 para indicar un acarreo.
 						end		
 					end
-					5'b00011 : begin
-						if (~(currency[7:4]=='d9)) begin
-							currency[7:4] = currency[7:4] + 1;
+					5'b00011 : begin // Cuando 'comb' es 00011 (los dos bits menos significativos están activos).
+						if (~(currency[7:4]=='d9)) begin // Comprueba si los bits de la posición 7 a 4 de 'currency' son diferentes de 9.
+							currency[7:4] = currency[7:4] + 1; // Si no son 9, incrementa esta parte de 'currency' en 1.
 						end
 						else begin
-							currency[7:4] = 0;
-							acarreo[1] = 1;
+							currency[7:4] = 0; // Si son 9, reinicia esta parte de 'currency' a 0.
+							acarreo[1] = 1; // Y establece el segundo bit de 'acarreo' a 1 para indicar un acarreo.
 						end		
 					end
-					5'b00111 : begin
-						if (currency[7:4]<'d8) begin
-							currency[7:4] = currency[7:4] + 'd2;
+					5'b00111 : begin // Cuando 'comb' es 00111 (los tres bits menos significativos están activos).
+						if (currency[7:4]<'d8) begin // Comprueba si los bits 7 a 4 de 'currency' son menores que 8.
+							currency[7:4] = currency[7:4] + 'd2; // Si es así, suma 2 a esta parte de 'currency'.
 						end
 						else begin
-							if (currency[7:4]=='d9) currency[7:4] = 1;
-							else currency[7:4]= 0;
-							acarreo[1] = 1;
+							if (currency[7:4]=='d9) currency[7:4] = 1; // Si los bits son 9, los reinicia a 1.
+							else currency[7:4]= 0; // Si los bits son 8, los reinicia a 0.
+							acarreo[1] = 1; // En ambos casos, establece el segundo bit de 'acarreo' a 1 para indicar un acarreo.
 						end		
 					end
-					5'b01111 : begin
-						if (currency[7:4]<'d5) begin
-							currency[7:4] = currency[7:4] + 'd5;
+					5'b01111 : begin // Cuando 'comb' es 01111 (los cuatro bits menos significativos están activos).
+						if (currency[7:4]<'d5) begin // Comprueba si los bits 7 a 4 de 'currency' son menores que 5.
+							currency[7:4] = currency[7:4] + 'd5; // Si es así, suma 5 a esta parte de 'currency'.
+						end
+						else begin // Esta serie de condiciones ajusta los bits 7 a 4 de 'currency' dependiendo de su valor actual.
+							if (currency[7:4]=='d5) currency[7:4] = 0; // Si es 5, lo reinicia a 0.
+							else if (currency[7:4]=='d6) currency[7:4] = 'd1; // Si es 6, lo ajusta a 1.
+							else if (currency[7:4]=='d7) currency[7:4] = 'd2; // Si es 7, lo ajusta a 2.
+							else if (currency[7:4]=='d8) currency[7:4] = 'd3; // Si es 8, lo ajusta a 3.
+							else if (currency[7:4]=='d9) currency[7:4] = 'd4; // Si es 9, lo ajusta a 4.
+							acarreo[1] = 1; // En todos los casos, establece el segundo bit de 'acarreo' a 1 para indicar un acarreo.
+						end		
+					end
+					5'b11111 : begin // Cuando 'comb' es 11111 (todos los bits están activos).
+						if (~(currency[11:8]=='d9)) begin // Comprueba si los bits de la posición 11 a 8 de 'currency' son diferentes de 9.
+							currency[11:8] = currency[11:8] + 1; // Si no son 9, incrementa esta parte de 'currency' en 1.
 						end
 						else begin
-							if (currency[7:4]=='d5) currency[7:4] = 0;
-							else if (currency[7:4]=='d6) currency[7:4] = 'd1;
-							else if (currency[7:4]=='d7) currency[7:4] = 'd2;
-							else if (currency[7:4]=='d8) currency[7:4] = 'd3;
-							else if (currency[7:4]=='d9) currency[7:4] = 'd4;
-							acarreo[1] = 1;
+							currency[11:8] = 0; // Si son 9, reinicia esta parte de 'currency' a 0.
+							acarreo[2] = 1; // Y establece el tercer bit de 'acarreo' a 1 para indicar un acarreo.
 						end		
 					end
-					5'b11111 : begin
-						if (~(currency[11:8]=='d9)) begin
-							currency[11:8] = currency[11:8] + 1;
-						end
-						else begin
-							currency[11:8] = 0;
-							acarreo[2] = 1;
-						end		
-					end
-					default: currency = currency;
+					default: currency = currency; // En cualquier otro caso no definido, mantiene el valor actual de 'currency'.
 				endcase
 				
 				// ACARREOS _________________________________________________________________________________
