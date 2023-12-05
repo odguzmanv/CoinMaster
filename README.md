@@ -10,3 +10,8 @@ https://github.com/odguzmanv/CoinMaster/assets/60590466/8b5d4ee1-dfef-466e-9dd5-
 Luego conectamos la hilera de sensores y pasamos las monedas como se verá en el siguiente video.
 
 https://github.com/odguzmanv/CoinMaster/assets/60590466/89b7918f-a87e-43ae-97d6-30ca02f948ea
+
+A continuación realizamos el bosquejo del diseño de la carcasa del proyecto, y aunque es un poco burdo o no es un corte láser, lo mostramos a continuación.
+
+![case2](https://github.com/odguzmanv/CoinMaster/assets/60590466/68790419-9812-450c-b886-a45bc4f00d73)
+![case1](https://github.com/odguzmanv/CoinMaster/assets/60590466/9ae96bed-4ddc-4e11-abcc-64a86f5e2516)
