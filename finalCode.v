@@ -266,71 +266,71 @@ module finalCode(coin,display,an,CLK_50,LED,rst);
 				
 				// Lógica para manejar acarreos en los diferentes segmentos de currency.
 				if (acarreo[0]==1) begin // Comprueba si el primer bit de 'acarreo' está activo.
-					if (~(currency[7:4]=='d9)) begin // Comprueba si los bits de la posición 7 a 4 de 'currency' son diferentes de 9.
-						currency[7:4] = currency[7:4] + 1; // Si no son 9, incrementa esta parte de 'currency' en 1.
+					if (~(currency[7:4]=='d9)) begin // Comprueba si el segundo dígito BCD de 'currency' es difernete de 9.
+						currency[7:4] = currency[7:4] + 1; // Si no es 9, le suma 1.
 					end
 					else begin
-						currency[7:4] = 0; // Si son 9, reinicia esta parte de 'currency' a 0.
+						currency[7:4] = 0; // Si es 9, lo hace 0.
 						acarreo[1:0] = 2'b10; // Establece el segundo bit de 'acarreo' a 1 y el primero a 0.
 					end
 				end
 				
 				if (acarreo[1]==1) begin // Comprueba si el segundo bit de 'acarreo' está activo.
-					if (~(currency[11:8]=='d9)) begin // Comprueba si los bits de la posición 11 a 8 de 'currency' son diferentes de 9.
-						currency[11:8] = currency[11:8] + 1; // Si no son 9, incrementa esta parte de 'currency' en 1.
+					if (~(currency[11:8]=='d9)) begin // Comprueba si el tercer dígito BCD de 'currency' es diferente de 9.
+						currency[11:8] = currency[11:8] + 1; // Si no es 9, le suma 1.
 					end
 					else begin
-						currency[11:8] = 0; // Si son 9, reinicia esta parte de 'currency' a 0.
+						currency[11:8] = 0; // Si es 9, lo hace 0.
 						acarreo[2:1] = 2'b10; // Establece el tercer bit de 'acarreo' a 1 y el segundo a 0.
 					end
 				end
 				
 				if (acarreo[2]==1) begin // Comprueba si el tercer bit de 'acarreo' está activo.
-					if (~(currency[15:12]=='d9)) begin // Comprueba si los bits de la posición 15 a 12 de 'currency' son diferentes de 9.
-						currency[15:12] = currency[15:12] + 1; // Si no son 9, incrementa esta parte de 'currency' en 1.
+					if (~(currency[15:12]=='d9)) begin // Comprueba que el cuarto dígito de 'currency' sea diferente de 9.
+						currency[15:12] = currency[15:12] + 1; // Si no es 9, le suma 1.
 					end
 					else begin
-						currency[15:12] = 0; // Si son 9, reinicia esta parte de 'currency' a 0.
+						currency[15:12] = 0; // Si es 9, lo hace 0.
 						acarreo[3:2] = 2'b10; // Establece el cuarto bit de 'acarreo' a 1 y el tercero a 0.
 					end
 				end
 				
 				if (acarreo[3]==1) begin // Comprueba si el cuarto bit de 'acarreo' está activo.
-					if (~(currency[19:16]=='d9)) begin // Comprueba si los bits de la posición 19 a 16 de 'currency' son diferentes de 9.
-						currency[19:16] = currency[19:16] + 1; // Si no son 9, incrementa esta parte de 'currency' en 1.
+					if (~(currency[19:16]=='d9)) begin // Comprueba si el quinto dígito BCD de 'currency' sea diferente de 9.
+						currency[19:16] = currency[19:16] + 1; //  Si no es 9, le suma 1.
 					end
 					else begin
-						currency[19:16] = 0; // Si son 9, reinicia esta parte de 'currency' a 0.
+						currency[19:16] = 0; // Si es 9, lo hace 0.
 						acarreo[4:3] = 2'b10; // Establece el quinto bit de 'acarreo' a 1 y el cuarto a 0.
 					end
 				end
 				
 				if (acarreo[4]==1) begin // Comprueba si el quinto bit de 'acarreo' está activo.
-					if (~(currency[23:20]=='d9)) begin // Comprueba si los bits de la posición 23 a 20 de 'currency' son diferentes de 9.
-						currency[23:20] = currency[23:20] + 1; // Si no son 9, incrementa esta parte de 'currency' en 1.
+					if (~(currency[23:20]=='d9)) begin // Comprueba si el sexto dígito BCD de 'currency' sea diferente de 9.
+						currency[23:20] = currency[23:20] + 1; //  Si no es 9, le suma 1.
 					end
 					else begin
-						currency[23:20] = 0; // Si son 9, reinicia esta parte de 'currency' a 0.
+						currency[23:20] = 0; // Si es 9, lo hace 0.
 						acarreo[5:4] = 2'b10; // Establece el sexto bit de 'acarreo' a 1 y el quinto a 0.
 					end
 				end
 				
 				if (acarreo[5]==1) begin // Comprueba si el sexto bit de 'acarreo' está activo.
-					if (~(currency[27:24]=='d9)) begin // Comprueba si los bits de la posición 27 a 24 de 'currency' son diferentes de 9.
-						currency[27:24] = currency[27:24] + 1; // Si no son 9, incrementa esta parte de 'currency' en 1.
+					if (~(currency[27:24]=='d9)) begin // Comprueba si el septimo dígito BCD de 'currency' sea diferente de 9.
+						currency[27:24] = currency[27:24] + 1; //  Si no es 9, le suma 1.
 					end
 					else begin
-						currency[27:24] = 0; // Si son 9, reinicia esta parte de 'currency' a 0.
+						currency[27:24] = 0; // Si es 9, lo hace 0.
 						acarreo[6:5] = 2'b10; // Establece el séptimo bit de 'acarreo' a 1 y el sexto a 0.
 					end
 				end
 				
 				if (acarreo[6]==1) begin // Comprueba si el séptimo bit de 'acarreo' está activo.
-					if (~(currency[31:28]=='d9)) begin // Comprueba si los bits de la posición 31 a 28 de 'currency' son diferentes de 9.
-						currency[31:28] = currency[31:28] + 1; // Si no son 9, incrementa esta parte de 'currency' en 1.
+					if (~(currency[31:28]=='d9)) begin // Comprueba si el octavo dígito BCD de 'currency' sea diferente de 9.
+						currency[31:28] = currency[31:28] + 1; // Si no es 9, le suma 1.
 					end
 					else begin
-						currency[31:28] = 0; // Si son 9, reinicia esta parte de 'currency' a 0.
+						currency[31:28] = 0; // Si es 9, lo hace 0.
 						acarreo[6] = 0; // Reinicia el séptimo bit de 'acarreo'.
 					end
 				end
