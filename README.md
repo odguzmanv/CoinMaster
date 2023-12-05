@@ -15,3 +15,8 @@ A continuación realizamos el bosquejo del diseño de la carcasa del proyecto, y
 
 ![case2](https://github.com/odguzmanv/CoinMaster/assets/60590466/68790419-9812-450c-b886-a45bc4f00d73)
 ![case1](https://github.com/odguzmanv/CoinMaster/assets/60590466/9ae96bed-4ddc-4e11-abcc-64a86f5e2516)
+
+Esquemático de uno de los módulos del sensor implementado para la detección de monedas.
+
+![sensorLtspice](https://github.com/odguzmanv/CoinMaster/assets/152459433/c7354c5e-5f86-4cd9-b7b0-83e482eabf2b)
+
