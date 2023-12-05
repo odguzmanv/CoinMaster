@@ -20,3 +20,12 @@ Esquemático de uno de los módulos del sensor implementado para la detección d
 
 ![sensorLtspice](https://github.com/odguzmanv/CoinMaster/assets/152459433/c7354c5e-5f86-4cd9-b7b0-83e482eabf2b)
 
+Se ensabló el sensor junto con la tarjeta digital FPGA en un contenedor de madera.
+
+![fotoUno](https://github.com/odguzmanv/CoinMaster/assets/152459433/f4fce490-4909-4e4d-8578-1a5fb0b6a017)
+![fotoDos](https://github.com/odguzmanv/CoinMaster/assets/152459433/b59a597f-55ba-41f5-81cc-2814efb62a42)
+
+
+
+
+
