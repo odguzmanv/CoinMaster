@@ -1,7 +1,7 @@
 // Módulo finalCode con entradas y salidas
 module finalCode(coin,display,an,CLK_50,LED,rst);
 	// Entradas
-	input [4:0] coin; // Entrada de 5 bits para la moneda
+	input [4:0] coin; // Entrada de 5 bits para la moneda. Hace referencia al sensor.
 	input CLK_50; // Reloj de entrada de 50 MHz
 	input rst; // Señal de reset
 
@@ -11,17 +11,17 @@ module finalCode(coin,display,an,CLK_50,LED,rst);
 	output [6:0] display; // Salida para el display de 7 segmentos
 
 	// Declaración de variables internas
-	reg [7:0] acarreo = 0; // Acarreo, inicializado a 0
+	reg [7:0] acarreo = 0; // Acarreo, inicializado a 0. Sirve como herramienta para sumar acarreos entre dígitos al sumar monedas.
 	integer i; // Variable entera para iteraciones
-	reg done; // Registro para indicar finalización
+	reg done; // Registro para indicar finalización en los ciclos "for".
 		
-	reg [27:0] contador; // Contador de 28 bits
+	reg [27:0] contador; // Contador de 28 bits. Se usa para personalizar el periodo del reloj.
 	reg [6:0] display; // Registro para el display de 7 segmentos
-	reg [31:0] currency; // Registro para manejar la moneda, 32 bits
-	reg [4:0] comb; // Registro de combinación, 5 bits
+	reg [31:0] currency; // Registro para llevar contabilidad del dinero, 32 bits. Son 8 dígitos en BCD.
+	reg [4:0] comb; // Registro de combinación, 5 bits. Herramienta para determinar la denominación de la moneda.
 	reg [7:0] an; // Registro para anodos, 8 bits
 	
-	reg [24:0] clk; // Registro para manejar el reloj, 25 bits
+	reg [24:0] clk; // Registro para manejar el reloj personalizado, 25 bits
 
 	// Asignación de LED a los 4 bits menos significativos de coin
 	assign LED = coin[3:0];
@@ -29,8 +29,8 @@ module finalCode(coin,display,an,CLK_50,LED,rst);
 	// Bloque inicial para configurar valores iniciales
 	initial begin
 		an = 8'b11111110; // Inicializar anodos
-		currency = 0; // Inicializar el valor de las monedas a 0
-		clk = 0; // Inicializar el reloj a 0
+		currency = 0; // Inicializar el valor de la contabilidad a 0
+		clk = 0; // Inicializar el reloj personalizado a 0
 	end
 
 	// Este bloque siempre se ejecuta en el flanco positivo del reloj CLK_50.
@@ -51,15 +51,15 @@ module finalCode(coin,display,an,CLK_50,LED,rst);
 		else if (an==8'b10111111) an = 8'b01111111; // Apaga el bit más significativo (an[7]).
 		else an = 8'b11111110; // Reinicia 'an' a su estado inicial con solo an[0] apagado.
 		
-		// Bucle for para determinar qué anodo está activo actualmente.
+		// Bucle for para determinar qué anodo está activo actualmente. Sirve para saber qué digito se va a mostrar.
 		for(i=7,done=0; i>=0 & done==0;i=i-1) begin
 			if (an[i]==0) begin
 				done = 1;
 			end
 		end
 
-|		// Esta sección actualiza el display en función del valor de la 'currency'.
-		// Cada if-else if comprueba el valor de 'i' para saber qué parte de 'currency' mostrar.
+|		// Esta sección actualiza el display en función del valor de 'currency'.
+		// Cada if-else if comprueba el valor de 'i' para saber qué dígito BCD de 'currency' mostrar.
 		if (i==0) begin // Si 'i' es 0, significa que se está actualizando el dígito más a la derecha del display.
 			case(currency[3:0]) // Selecciona qué mostrar basado en los 4 bits menos significativos de 'currency'.
 				4'b0000: display = 7'b1000000; // Muestra '0' en el display de 7 segmentos.
@@ -184,7 +184,7 @@ module finalCode(coin,display,an,CLK_50,LED,rst);
 		
 	// Bloque always que se ejecuta en cada flanco positivo del reloj CLK_50.
 	always @(posedge CLK_50) begin
-		// Si se activa la señal de reset, reinicia el valor de las monedas a 0.
+		// Si se activa la señal de reset, reinicia el valor de de "currency" a 0.
 			if (rst==0) currency = 0;
 		
 		// Este bloque maneja la detección de monedas y el control de tiempo.
@@ -212,34 +212,34 @@ module finalCode(coin,display,an,CLK_50,LED,rst);
 				// Lógica para actualizar currency y acarreos. Depende de la moneda ingresada, se agrega un 1 por cada sensor cubierto.
 				case(comb)
 					5'b00001 : begin // Cuando 'comb' es 00001 (solo el bit menos significativo está activo).
-						if (currency[3:0] == 0) currency = currency + 5; // Si los 4 bits menos significativos de 'currency' son 0, suma 5.
+						if (currency[3:0] == 0) currency = currency + 5; // Si el digito BCD menos significativo de 'currency' es 0, le suma 5.
 						else begin
-							currency[3:0] = 0; // Si no, reinicia los 4 bits menos significativos de 'currency' a 0.
+							currency[3:0] = 0; // Si no, lo hace 0.
 							acarreo[0] = 1; // Y establece el primer bit de 'acarreo' a 1 para indicar un acarreo.
 						end		
 					end
 					5'b00011 : begin // Cuando 'comb' es 00011 (los dos bits menos significativos están activos).
-						if (~(currency[7:4]=='d9)) begin // Comprueba si los bits de la posición 7 a 4 de 'currency' son diferentes de 9.
-							currency[7:4] = currency[7:4] + 1; // Si no son 9, incrementa esta parte de 'currency' en 1.
+						if (~(currency[7:4]=='d9)) begin // Comprueba que el segundo dígito BCD de 'currency' sea diferentes de 9.
+							currency[7:4] = currency[7:4] + 1; // Si no es 9, le suma 1.
 						end
 						else begin
-							currency[7:4] = 0; // Si son 9, reinicia esta parte de 'currency' a 0.
+							currency[7:4] = 0; // Si es 9, lo hace 0.
 							acarreo[1] = 1; // Y establece el segundo bit de 'acarreo' a 1 para indicar un acarreo.
 						end		
 					end
 					5'b00111 : begin // Cuando 'comb' es 00111 (los tres bits menos significativos están activos).
-						if (currency[7:4]<'d8) begin // Comprueba si los bits 7 a 4 de 'currency' son menores que 8.
-							currency[7:4] = currency[7:4] + 'd2; // Si es así, suma 2 a esta parte de 'currency'.
+						if (currency[7:4]<'d8) begin // Comprueba que el segundo bit BCD de 'currency' sea menor que 8.
+							currency[7:4] = currency[7:4] + 'd2; // Si es así, le suma 2.
 						end
 						else begin
-							if (currency[7:4]=='d9) currency[7:4] = 1; // Si los bits son 9, los reinicia a 1.
-							else currency[7:4]= 0; // Si los bits son 8, los reinicia a 0.
+							if (currency[7:4]=='d9) currency[7:4] = 1; // Si es 9, lo hace 1.
+							else currency[7:4]= 0; // Si es 8, lo hace 0.
 							acarreo[1] = 1; // En ambos casos, establece el segundo bit de 'acarreo' a 1 para indicar un acarreo.
 						end		
 					end
 					5'b01111 : begin // Cuando 'comb' es 01111 (los cuatro bits menos significativos están activos).
-						if (currency[7:4]<'d5) begin // Comprueba si los bits 7 a 4 de 'currency' son menores que 5.
-							currency[7:4] = currency[7:4] + 'd5; // Si es así, suma 5 a esta parte de 'currency'.
+						if (currency[7:4]<'d5) begin // Comprueba que el segundo dígito BCD de 'currency' sea menor que 5.
+							currency[7:4] = currency[7:4] + 'd5; // Si es así, le suma 5.
 						end
 						else begin // Esta serie de condiciones ajusta los bits 7 a 4 de 'currency' dependiendo de su valor actual.
 							if (currency[7:4]=='d5) currency[7:4] = 0; // Si es 5, lo reinicia a 0.
@@ -251,11 +251,11 @@ module finalCode(coin,display,an,CLK_50,LED,rst);
 						end		
 					end
 					5'b11111 : begin // Cuando 'comb' es 11111 (todos los bits están activos).
-						if (~(currency[11:8]=='d9)) begin // Comprueba si los bits de la posición 11 a 8 de 'currency' son diferentes de 9.
-							currency[11:8] = currency[11:8] + 1; // Si no son 9, incrementa esta parte de 'currency' en 1.
+						if (~(currency[11:8]=='d9)) begin // Comprueba que el tercer dígito de 'currency' sea diferente de 9.
+							currency[11:8] = currency[11:8] + 1; // Si no es 9, le suma 1.
 						end
 						else begin
-							currency[11:8] = 0; // Si son 9, reinicia esta parte de 'currency' a 0.
+							currency[11:8] = 0; // Si es 9, lo hace 0.
 							acarreo[2] = 1; // Y establece el tercer bit de 'acarreo' a 1 para indicar un acarreo.
 						end		
 					end
